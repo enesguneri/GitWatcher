@@ -4,6 +4,7 @@
 import connectToDatabase from './mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
+import { createSession } from './session';
 
 export async function registerUser(formData: FormData) {
     try {
@@ -19,7 +20,7 @@ export async function registerUser(formData: FormData) {
             return { error: 'This email is already registered.' };
         }
 
-        // 2. Siber Güvenlik: Şifreyi Hash'le (Hashing)
+        // 2. Şifreyi Hash'le (Hashing)
         // 10 "salt round" kullanarak şifreyi geri döndürülemez hale getiriyoruz
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -37,5 +38,37 @@ export async function registerUser(formData: FormData) {
     } catch (error) {
         console.error('Registration error:', error);
         return { error: 'Something went wrong during registration.' };
+    }
+}
+
+export async function loginUser(formData: FormData) {
+    try {
+        await connectToDatabase();
+
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        // 1. Kullanıcıyı e-posta adresinden bul
+        const user = await User.findOne({ email });
+
+        if (!user || !user.password) {
+            return { error: 'Invalid email or password.' };
+        }
+
+        // 2. Girilen şifre ile veritabanındaki Hashed şifreyi karşılaştır
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return { error: 'Invalid email or password.' };
+        }
+
+        // 3. Şifre doğruysa JWT oluştur ve Cookie'ye kaydet
+        // user._id MongoDB'nin otomatik atadığı benzersiz kimliktir
+        await createSession(user._id.toString());
+
+        return { success: true };
+    } catch (error) {
+        console.error('Login error:', error);
+        return { error: 'Something went wrong during login.' };
     }
 }
