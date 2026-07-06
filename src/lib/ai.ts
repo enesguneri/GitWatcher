@@ -12,7 +12,7 @@ function getGeminiModel() {
         throw new Error('GEMINI_API_KEY is not defined in environment variables.');
     }
     const genAI = new GoogleGenerativeAI(apiKey);
-    return genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    return genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
 }
 
 // ─── Safe JSON Parser ───────────────────────────────────────────────
