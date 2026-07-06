@@ -8,12 +8,12 @@ import { loginUser } from '@/lib/actions';
 
 export default function LoginPage() {
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Butona basıldığında yükleniyor animasyonu için
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     async function handleLogin(formData: FormData) {
         setIsLoading(true);
-        setError(''); // Yeni denemede eski hatayı temizle
+        setError('');
 
         const result = await loginUser(formData);
 
@@ -21,49 +21,78 @@ export default function LoginPage() {
             setError(result.error);
             setIsLoading(false);
         } else if (result?.success) {
-            // Başarılı giriş yapıldı! Kullanıcıyı panele (dashboard) yönlendir
             router.push('/dashboard');
         }
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                <p className="text-gray-500 mb-8">Sign in to your GitWatcher account.</p>
+        <div className="relative min-h-screen flex items-center justify-center bg-[#0a0e1a] text-slate-100 p-6 selection:bg-blue-500/30 selection:text-blue-200">
+            {/* Background Glows */}
+            <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-10 right-10 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
 
+            <div className="relative w-full max-w-md rounded-2xl border border-white/[0.08] bg-white/[0.02] p-8 backdrop-blur-xl shadow-2xl shadow-black/50 animate-[fadeIn_0.4s_ease-out]">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center gap-2 mb-3">
+                        <span className="text-2xl">🔍</span>
+                        <span className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
+                            GitWatcher
+                        </span>
+                    </div>
+                    <h1 className="text-2xl font-black text-slate-100">Welcome Back</h1>
+                    <p className="text-xs text-slate-500 mt-1">Sign in to your account to monitor repositories</p>
+                </div>
+
+                {/* Form */}
                 <form action={handleLogin} className="space-y-4">
-                    <input
-                        name="email"
-                        type="email"
-                        placeholder="Email Address"
-                        required
-                        className="w-full p-3 bg-white text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    />
-                    <input
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        required
-                        className="w-full p-3 bg-white text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    />
+                    <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                            Email Address
+                        </label>
+                        <input
+                            name="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            required
+                            className="w-full px-4 py-3 bg-white/[0.02] text-slate-200 placeholder:text-slate-600 border border-white/[0.08] rounded-xl focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all duration-150 text-sm"
+                        />
+                    </div>
 
-                    {/* Hata mesajı varsa burada kırmızı renkte gösteriyoruz */}
-                    {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+                    <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                            Password
+                        </label>
+                        <input
+                            name="password"
+                            type="password"
+                            placeholder="••••••••"
+                            required
+                            className="w-full px-4 py-3 bg-white/[0.02] text-slate-200 placeholder:text-slate-600 border border-white/[0.08] rounded-xl focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all duration-150 text-sm"
+                        />
+                    </div>
+
+                    {/* Error message with bounce animation */}
+                    {error && (
+                        <p className="text-rose-400 text-xs font-semibold bg-rose-500/10 border border-rose-500/20 px-3 py-2 rounded-lg animate-[fadeIn_0.2s_ease-out]">
+                            ⚠️ {error}
+                        </p>
+                    )}
 
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 rounded-lg transition-colors"
+                        className="w-full py-3 font-semibold rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:opacity-95 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed text-white shadow-lg shadow-purple-500/10 transition-all duration-150 text-sm cursor-pointer mt-2"
                     >
                         {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
 
-                <div className="mt-6 text-center text-sm text-gray-600">
+                {/* Footer Link */}
+                <div className="mt-8 text-center text-xs text-slate-500 border-t border-white/[0.04] pt-5">
                     Don't have an account?{' '}
-                    <Link href="/register" className="font-semibold text-blue-600 hover:underline">
-                        Create one
+                    <Link href="/register" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+                        Create one here
                     </Link>
                 </div>
             </div>
