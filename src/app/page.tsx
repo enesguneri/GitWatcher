@@ -1,5 +1,4 @@
 // src/app/page.tsx
-import connectToDatabase from '@/lib/mongodb'; // Veritabanı fonksiyonumuzu içeri aktarıyoruz
 
 interface Repo {
     id: number;
@@ -10,8 +9,10 @@ interface Repo {
     language: string | null;
 }
 
+// Prevent static pre-rendering — this page fetches live data from GitHub API
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
-    await connectToDatabase();
 
     const response = await fetch('https://api.github.com/users/enesguneri/repos?sort=updated', {
         cache: 'no-store'

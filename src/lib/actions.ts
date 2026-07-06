@@ -5,6 +5,8 @@ import connectToDatabase from './mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import { createSession } from './session';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function registerUser(formData: FormData) {
     try {
@@ -71,4 +73,10 @@ export async function loginUser(formData: FormData) {
         console.error('Login error:', error);
         return { error: 'Something went wrong during login.' };
     }
+}
+
+export async function logoutUser() {
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
+    redirect('/login');
 }
