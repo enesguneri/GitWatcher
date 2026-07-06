@@ -37,7 +37,7 @@ export async function verifySession() {
         const { payload } = await jwtVerify(session, encodedKey, {
             algorithms: ['HS256'],
         });
-        return payload;
+        return payload as { userId: string };
     } catch (error) {
         console.log('Geçersiz veya süresi dolmuş token.');
         return null;
